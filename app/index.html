@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; style-src 'self'; object-src 'none'; base-uri 'none'">
+  <title>Vice Route 55 | GTA VI Trophy Atlas</title>
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <header class="mast wrap">
+    <div class="identity"><span class="shield" aria-hidden="true">55</span><div><p class="eyebrow">GTA VI / PS5 FIELD GUIDE</p><h1>Vice Route 55</h1></div></div>
+    <div class="edition"><span class="compass" aria-hidden="true">✧</span><div><b>PLATINUM ROUTE</b><br>Single player · offline</div></div>
+  </header>
+  <div class="navband">
+    <div class="wrap navline">
+      <nav aria-label="Guide views">
+        <button data-tab="roadmap" aria-current="page">Roadmap</button>
+        <button data-tab="tracker">Tracker</button>
+        <button data-tab="missables">Missables</button>
+        <button data-tab="sources">Sources</button>
+      </nav>
+      <label class="switch"><input type="checkbox" id="spoilers" checked> Spoiler shield</label>
+    </div>
+  </div>
+  <main class="wrap layout" id="content" tabindex="-1">
+    <div class="views">
+      <section id="roadmap" aria-label="Roadmap"><p>Loading route data…</p></section>
+      <section id="tracker" aria-labelledby="tracker-title" hidden>
+        <div class="section-head"><div><p class="eyebrow">TROPHY REGISTER</p><h2 id="tracker-title">The checklist</h2></div><span id="match-count" role="status"></span></div>
+        <div class="filters">
+          <label>Search <input id="query" type="search" placeholder="Name, description or #"></label>
+          <label>Kind <select id="kind"></select></label>
+          <label>Progress <select id="earned-filter"><option value="all">All trophies</option><option value="open">Not earned</option><option value="earned">Earned</option></select></label>
+        </div>
+        <div class="register"><ul id="trophy-list"></ul><article id="trophy-detail" aria-label="Selected trophy guide"></article></div>
+      </section>
+      <section id="missables" aria-label="Missables" hidden></section>
+      <section id="sources" aria-label="Sources and disagreements" hidden></section>
+    </div>
+    <aside class="rail" aria-label="Run dashboard">
+      <section class="rail-section" aria-labelledby="progress-title">
+        <p class="eyebrow">ODOMETER / 01</p><h2 id="progress-title">Platinum progress</h2>
+        <div id="progress"></div>
+      </section>
+      <section class="rail-section" aria-labelledby="crew-title">
+        <p class="eyebrow">CREW / 02</p><h2 id="crew-title">Jason &amp; Lucia</h2>
+        <div class="segmented" id="crew" role="group" aria-label="Character route filter">
+          <button data-crew="all">All</button><button data-crew="jason">Jason</button><button data-crew="lucia">Lucia</button>
+        </div>
+        <div id="crew-counts"></div>
+      </section>
+      <section class="rail-section" aria-labelledby="plan-title">
+        <p class="eyebrow">PIT STOP / 03</p><h2 id="plan-title">Run planner</h2>
+        <div class="segmented" id="sessions" role="group" aria-label="Session length">
+          <button data-minutes="30">30 min</button><button data-minutes="60">60 min</button><button data-minutes="120">120 min</button>
+        </div>
+        <div id="plan"></div>
+      </section>
+      <section class="rail-section utility" aria-label="Progress tools">
+        <button id="share" title="Copy a shareable progress link">Copy link</button>
+        <button id="export">Export JSON</button>
+        <button id="import">Import JSON</button>
+        <button id="print">Print checklist</button>
+        <input type="file" id="import-file" accept=".json,application/json" hidden>
+        <input id="share-fallback" aria-label="Shareable progress link" readonly hidden>
+      </section>
+      <p id="notice" role="status"></p>
+    </aside>
+  </main>
+  <footer class="wrap footer"><span>VICE ROUTE 55 / FIELD NOTES</span><span>Research edition · 20 Nov 2026</span></footer>
+  <section id="print-sheet" aria-label="Printable trophy checklist"></section>
+  <noscript>This guide needs JavaScript to load its local trophy data.</noscript>
+</body>
+</html>
