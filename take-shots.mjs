@@ -20,6 +20,7 @@ const browser = await chromium.launch({
 });
 
 try {
+  let totalBytes = 0;
   for (const { file, path, viewport } of shots) {
     assert.equal(path, '/');
     const view = views[file];
@@ -52,7 +53,10 @@ try {
         assert.equal(height, viewport.height);
         assert.ok(Math.max(width, height) <= 1280 && Math.min(width, height) >= 480);
         const { size } = await stat(destination);
+        assert.ok(size > 10 * 1024, `${file} is too small to be a non-blank screenshot`);
         console.log(`${file}: ${size} bytes, ${width}×${height}, JPEG quality ${quality}`);
+        totalBytes += size;
+        console.log(`Running screenshot total: ${totalBytes} bytes`);
         saved = true;
         break;
       }
@@ -61,6 +65,7 @@ try {
       await page.close();
     }
   }
+  console.log(`Screenshot capture finished: ${totalBytes} bytes across 4 screenshots.`);
   assert.deepEqual((await readdir(output)).sort(), Object.keys(views).sort());
 } finally {
   await browser.close();

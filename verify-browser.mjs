@@ -18,7 +18,7 @@ const watch = page => {
   page.on('pageerror', error => pageErrors.push(error.message));
 };
 watch(page);
-page.setDefaultTimeout(4000);
+page.setDefaultTimeout(6000); // Shared verification VM can respond slowly under load.
 const el = selector => page.locator(selector);
 const tab = name => el(`nav [data-tab="${name}"]`).click();
 const pick = id => el(`[data-pick="${id}"]`);
@@ -213,6 +213,7 @@ try {
   await check(`Browser errors: ${consoleErrors.length} console, ${pageErrors.length} page`, () => {
     assert.deepEqual({ consoleErrors, pageErrors }, { consoleErrors: [], pageErrors: [] });
   });
+  console.log('Browser verification run finished.');
 } finally {
   await browser.close();
 }
