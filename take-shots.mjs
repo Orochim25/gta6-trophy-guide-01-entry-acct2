@@ -7,10 +7,10 @@ import { chromium } from '/home/hatch/workspace/xe-sdk/node_modules/playwright-c
 const shots = JSON.parse(await readFile(new URL('./shots.json', import.meta.url)));
 const output = new URL('./screenshots/', import.meta.url);
 const views = {
-  '1-roadmap.jpg': 'roadmap',
-  '2-tracker.jpg': 'tracker',
-  '3-missables.jpg': 'missables',
-  '4-sources.jpg': 'sources',
+  '1-tracker.jpg': 'tracker',
+  '2-missables.jpg': 'missables',
+  '3-sources.jpg': 'sources',
+  '4-journal.jpg': 'journal',
 };
 assert.deepEqual(shots.map(shot => shot.file), Object.keys(views));
 await mkdir(output, { recursive: true });
@@ -25,21 +25,23 @@ try {
     assert.equal(path, '/');
     const view = views[file];
     const page = await browser.newPage({ viewport, deviceScaleFactor: 1 });
-    page.setDefaultTimeout(5000);
+    page.setDefaultTimeout(8000);
     try {
       await page.goto(new URL('./app/index.html', import.meta.url).href);
-      await page.locator('#roadmap .route').waitFor();
-      if (view !== 'roadmap') await page.locator(`nav [data-tab="${view}"]`).click();
+      await page.locator('#tracker .trophy-row').first().waitFor();
+      if (view !== 'tracker') await page.locator(`nav [data-tab="${view}"]`).click();
       assert.ok(await page.locator(`#${view}`).isVisible());
       if (view === 'tracker') {
-        await page.locator('[data-earned="2"]').click();
-        assert.ok(await page.locator('[data-earned="2"]').isChecked());
-        await page.locator('[data-pick="28"]').click();
+        // Demo progress: 6 earned (11%) so the top bar shows a real ring and counts.
+        for (const id of [2, 3, 4, 8, 16, 35]) {
+          await page.locator(`[data-earned="${id}"]`).click();
+          assert.ok(await page.locator(`[data-earned="${id}"]`).isChecked());
+        }
+        await page.locator('[data-pick="1"]').click();
         assert.ok(await page.locator('#trophy-detail ol .cite').first().isVisible());
+        await page.locator('#trophy-list').evaluate(element => { element.scrollTop = 0; });
       }
-      for (const selector of ['#trophy-list', 'html', 'body']) {
-        await page.locator(selector).evaluate(element => { element.scrollTop = 0; });
-      }
+      await page.evaluate(() => window.scrollTo(0, 0));
       const destination = fileURLToPath(new URL(file, output));
       let saved = false;
       for (const quality of [80, 70, 60]) {
