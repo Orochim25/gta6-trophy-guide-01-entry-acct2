@@ -1,77 +1,181 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; style-src 'self'; object-src 'none'; base-uri 'none'">
-  <title>Vice Route 55 | GTA VI Trophy Atlas</title>
-  <link rel="stylesheet" href="./style.css">
-  <script type="module" src="./app.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vice Route 55 — GTA VI Trophy Route Map</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <a class="skip" href="#content">Skip to content</a>
-  <header class="mast wrap">
-    <div class="identity"><span class="shield" aria-hidden="true">55</span><div><p class="eyebrow">GTA VI / PS5 FIELD GUIDE</p><h1>Vice Route 55</h1></div></div>
-    <div class="edition"><span class="compass" aria-hidden="true">✧</span><div><b>PLATINUM ROUTE</b><br>Single player · offline</div></div>
-  </header>
-  <div class="navband">
-    <div class="wrap navline">
-      <nav aria-label="Guide views">
-        <button data-tab="roadmap" aria-current="page">Roadmap</button>
-        <button data-tab="tracker">Tracker</button>
-        <button data-tab="missables">Missables</button>
-        <button data-tab="sources">Sources</button>
-      </nav>
-      <label class="switch"><input type="checkbox" id="spoilers" checked> Spoiler shield</label>
-    </div>
+<header class="topbar">
+  <div class="brand">
+    <h1>VICE ROUTE <span class="no">55</span></h1>
+    <div class="sub">A 55-trophy route map — every step cited, every dispute shown both ways. Grand Theft Auto VI · PS5 · read 20 Nov 2026</div>
   </div>
-  <main class="wrap layout" id="content" tabindex="-1">
-    <div class="views">
-      <section id="roadmap" aria-label="Roadmap"><p>Loading route data…</p></section>
-      <section id="tracker" aria-labelledby="tracker-title" hidden>
-        <div class="section-head"><div><p class="eyebrow">TROPHY REGISTER</p><h2 id="tracker-title">The checklist</h2></div><span id="match-count" role="status"></span></div>
-        <div class="filters">
-          <label>Search <input id="query" type="search" placeholder="Name, description or #"></label>
-          <label>Kind <select id="kind"></select></label>
-          <label>Progress <select id="earned-filter"><option value="all">All trophies</option><option value="open">Not earned</option><option value="earned">Earned</option></select></label>
-        </div>
-        <div class="register"><ul id="trophy-list"></ul><article id="trophy-detail" aria-label="Selected trophy guide"></article></div>
-      </section>
-      <section id="missables" aria-label="Missables" hidden></section>
-      <section id="sources" aria-label="Sources and disagreements" hidden></section>
+  <div id="progress">
+    <svg class="dial" viewBox="0 0 52 52" role="img" aria-label="0% complete">
+      <circle class="track" cx="26" cy="26" r="22" pathLength="100" stroke-dasharray="100 100"></circle>
+      <circle class="arc" cx="26" cy="26" r="22" pathLength="100" stroke-dasharray="0 100"></circle>
+    </svg>
+    <div class="nums" id="progress-nums"><b>0 / 55 earned</b><br>P 0 · G 0 · S 0 · B 0<br><span id="crew-nums">Jason 0/53 · Lucia 0/53</span><br><span id="coll-nums">Collectibles 0/5 logged</span><br><span id="hours-nums">200 h remaining (estimate)</span></div>
+  </div>
+  <div class="actions">
+    <button id="export" type="button">Export</button>
+    <button id="import" type="button">Import</button>
+    <input type="file" id="import-file" accept="application/json,.json" hidden>
+    <button id="share" type="button">Copy link</button>
+    <button id="print" type="button">Print checklist</button>
+    <label id="spoilers-wrap"><input type="checkbox" id="spoilers" checked> Spoiler shield</label>
+    <span id="saved-badge">✓ SAVED IN THIS BROWSER</span>
+  </div>
+</header>
+<input id="share-fallback" readonly aria-label="Progress link">
+<div id="notice" aria-live="polite"></div>
+<p class="audit" id="audit"><noscript>Enable JavaScript to see the audit strip and tracker — all 55 trophies, 1P 2G 6S 46B, 28 PSN-hidden, 18 sources, read 20 Nov 2026.</noscript></p>
+
+<nav class="tabs" aria-label="Views">
+  <button type="button" data-tab="tracker" aria-current="page">Tracker</button>
+  <button type="button" data-tab="roadmap">Roadmap</button>
+  <button type="button" data-tab="missables">Missables</button>
+  <button type="button" data-tab="journal">Journal</button>
+  <button type="button" data-tab="planner">Planner</button>
+  <button type="button" data-tab="sources">Sources</button>
+</nav>
+
+<main class="views">
+  <section id="tracker" class="view active" aria-label="Tracker">
+    <h2>Tracker — all 55 trophies</h2>
+    <div class="filters">
+      <input type="search" id="query" placeholder="Search trophies, missions, places…" aria-label="Search trophies">
+      <select id="kind" aria-label="Filter by kind">
+        <option value="all">All kinds</option>
+        <option value="story">Story</option>
+        <option value="missable">Missable</option>
+        <option value="collectibles">Collectibles</option>
+        <option value="activities">Activities</option>
+        <option value="online">Online</option>
+      </select>
+      <select id="earned-filter" aria-label="Filter by progress">
+        <option value="all">All progress</option>
+        <option value="earned">Earned</option>
+        <option value="open">Not earned</option>
+      </select>
+      <div class="crew" role="group" aria-label="Filter by character">
+        <button type="button" data-crew="all" aria-pressed="true">All</button>
+        <button type="button" data-crew="jason" aria-pressed="false">Jason</button>
+        <button type="button" data-crew="lucia" aria-pressed="false">Lucia</button>
+      </div>
+      <button type="button" id="reset-filters">Clear filters</button>
+      <span id="match-count">55 / 55 trophies</span>
     </div>
-    <aside class="rail" aria-label="Run dashboard">
-      <section class="rail-section" aria-labelledby="progress-title">
-        <p class="eyebrow">ODOMETER / 01</p><h2 id="progress-title">Platinum progress</h2>
-        <div id="progress"></div>
-      </section>
-      <section class="rail-section" aria-labelledby="crew-title">
-        <p class="eyebrow">CREW / 02</p><h2 id="crew-title">Jason &amp; Lucia</h2>
-        <div class="segmented" id="crew" role="group" aria-label="Character route filter">
-          <button data-crew="all">All</button><button data-crew="jason">Jason</button><button data-crew="lucia">Lucia</button>
+    <div class="chips" id="chips" role="group" aria-label="Quick filters"></div>
+    <div class="tracker-grid">
+      <div id="trophy-list" role="listbox" aria-label="Trophy list"></div>
+      <div id="trophy-detail" aria-live="polite"></div>
+      <aside class="rail">
+        <div class="box">
+          <h3>Next up · Roadmap order</h3>
+          <ol id="next-up"></ol>
         </div>
-        <div id="crew-counts"></div>
-      </section>
-      <section class="rail-section" aria-labelledby="plan-title">
-        <p class="eyebrow">PIT STOP / 03</p><h2 id="plan-title">Run planner</h2>
-        <div class="segmented" id="sessions" role="group" aria-label="Session length">
-          <button data-minutes="30">30 min</button><button data-minutes="60">60 min</button><button data-minutes="120">120 min</button>
+        <div class="box">
+          <h3>Sources for this guide</h3>
+          <ul id="guide-sources"></ul>
         </div>
-        <div id="plan"></div>
-      </section>
-      <section class="rail-section utility" aria-label="Progress tools">
-        <button id="share" title="Copy a shareable progress link">Copy link</button>
-        <button id="export">Export JSON</button>
-        <button id="import">Import JSON</button>
-        <button id="print">Print checklist</button>
-        <input type="file" id="import-file" accept=".json,application/json" hidden>
-        <input id="share-fallback" aria-label="Shareable progress link" readonly hidden>
-      </section>
-      <p id="notice" role="status"></p>
-    </aside>
-  </main>
-  <footer class="wrap footer"><span>VICE ROUTE 55 / FIELD NOTES</span><span>Research edition · 20 Nov 2026</span></footer>
-  <section id="print-sheet" aria-label="Printable trophy checklist"></section>
-  <noscript>This guide needs JavaScript to load its local trophy data.</noscript>
+        <div class="box" id="planner-box">
+          <h3>Session planner</h3>
+          <div class="minutes" role="group" aria-label="Session length">
+            <button type="button" data-minutes="30" aria-pressed="true">30 min</button>
+            <button type="button" data-minutes="60" aria-pressed="false">60 min</button>
+            <button type="button" data-minutes="120" aria-pressed="false">120 min</button>
+          </div>
+          <ol id="plan"></ol>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="roadmap" class="view" aria-label="Roadmap">
+    <h2>Roadmap</h2>
+    <p class="route-meta">Difficulty <b>4/10</b> · Time to platinum <b>~200 h</b> (modal estimate; up to 300 h per Push Square — see D2) · <b>1 playthrough</b> · <b>0 online trophies</b> · <b>0 glitched</b> · No difficulty settings, no mission replay, no New Game+ · <b>15 manual saves + 1 autosave</b> — keep a save at the start and end of each chapter · <b>Cheats disable trophies AND saving</b> — keep cheats off the platinum run. Hardest trophy: <b>A Long Road</b> (100% Completion) [1][4][8].</p>
+    <div class="route">
+      <div class="phase">
+        <h3>Phase 1 — The story · 60–80 h</h3>
+        <p>Finish the story + optional missions. Scan vehicles, study animals as you go.</p>
+        <ol>
+          <li><button type="button" class="route-stop" data-open="28">Positive Mental Attitude — Chapter 1 balcony meditation (missable)</button></li>
+          <li><button type="button" class="route-stop" data-open="2">Just Like Paradise — Gone Fishing</button></li>
+          <li><button type="button" class="route-stop" data-open="3">Paradise Lost — finish Chapter 1</button></li>
+          <li><button type="button" class="route-stop" data-open="4">T**s Ass Drug Money — finish Chapter 2</button></li>
+          <li><button type="button" class="route-stop" data-open="7">You Gotta Know When to Get Off — final mission</button></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <h3>Phase 2 — 100% checklist · ~100 h</h3>
+        <p>Post-story, Progress &gt; Stats &gt; 100% Completion. Progress made during the story already counts.</p>
+        <ol>
+          <li><button type="button" class="route-stop" data-open="14">A Long Road — 100% Completion (hardest trophy)</button></li>
+          <li><button type="button" class="route-stop" data-open="15">Cunning Stunts — 250 stunts (100% needs 300)</button></li>
+          <li><button type="button" class="route-stop" data-open="31">You WAiNKer! — 100 WAiNK scans</button></li>
+          <li><button type="button" class="route-stop" data-open="32">One Last Thing — 50 challenges (100% needs 70)</button></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <h3>Phase 3 — Cleanup · ~10 h</h3>
+        <p>Strangers &amp; Freaks + miscellaneous. Everything here stays available after the story.</p>
+        <ol>
+          <li><button type="button" class="route-stop" data-open="25">Strangers &amp; Freaks — 8 stranger strands</button></li>
+          <li><button type="button" class="route-stop" data-open="40">Maximum Withdrawal — 5 bank vaults</button></li>
+          <li><button type="button" class="route-stop" data-open="44">In The Beginning… — Ocean Beach cocktail</button></li>
+          <li><button type="button" class="route-stop" data-open="1">Vice Got a Price! — the platinum pops</button></li>
+        </ol>
+      </div>
+    </div>
+    <details class="check">
+      <summary>100% Completion checklist — key numbers (PowerPyx [1], GTABase [4], KeenGamer [8])</summary>
+      <div class="check-grid">
+        <span><b>100</b> optional missions</span><span><b>200/277</b> base-model vehicles scanned</span><span><b>100/255</b> animals studied</span>
+        <span><b>15/18</b> meditations</span><span><b>70/80</b> challenges</span><span><b>300/397</b> stunts</span>
+        <span><b>100</b> WAiNK scans</span><span><b>15/18</b> card sets</span><span><b>33/33</b> underwater discoveries</span>
+        <span><b>42/42</b> shooting-range golds</span><span><b>42/42</b> drone races</span><span><b>15/15</b> Bret Target Decks</span>
+        <span><b>30/40</b> races won</span><span><b>10/13</b> race-challenge golds</span><span><b>39</b> gang operations · <b>22</b> bank jobs · <b>7</b> payday loans · <b>8</b> bank vaults</span>
+        <span>Kenton treasure sets <b>5/7</b></span><span>Magazines/books/comics <b>30/34</b></span><span>Cocaine Flamingos <b>100/125</b></span>
+        <span>Unique playlists <b>2/2</b></span><span>Discovered styles <b>70/79</b></span><span>Standard weapons <b>50/66</b></span>
+        <span>Smash 'N' Grabs <b>34/35</b></span><span>Stick Ups <b>50/91</b></span><span>Narcotics fenced <b>$100,000</b> · jewelry <b>$100,000</b> · marked bills <b>$250,000</b> · vehicles <b>$200,000</b></span>
+        <span>Play all <b>4</b> video games</span><span>Pool opponents <b>5/7</b></span><span>Mini golf <b>2/3</b> locations · basketball hoops <b>90/100</b></span>
+      </div>
+    </details>
+    <p><a href="#" class="viewlink" data-tab="missables">Missables &amp; at-risk →</a> · <a href="#" class="viewlink" data-tab="planner">Open session planner →</a> · <a href="#" class="viewlink" data-tab="sources">Sources &amp; disputes →</a> · <a href="#" class="viewlink" data-goto-disputes>Disputes — both versions →</a></p>
+  </section>
+
+  <section id="missables" class="view" aria-label="Missables and at-risk">
+    <h2>Missables &amp; at-risk</h2>
+    <p class="warning">Only <b>1 trophy is possibly missable</b> — Positive Mental Attitude (#28), the Chapter 1 balcony meditation. <b>8 trophies are at risk</b> (medium/low confidence methods). Everything else is confirmed safe after the story.</p>
+    <div class="cards" id="missable-cards"></div>
+  </section>
+
+  <section id="journal" class="view" aria-label="Journal by chapter">
+    <h2>Journal — by chapter</h2>
+    <p class="route-meta">Trophies grouped by the chapter where they first become available. Chapter 7 is the post-story cleanup.</p>
+    <div id="journal-chapters"></div>
+  </section>
+
+  <section id="sources" class="view" aria-label="Sources">
+    <h2>Sources</h2>
+    <div id="disagreements" tabindex="-1">
+      <h3>Disputes — both versions shown</h3>
+      <p><button type="button" data-disputes>Jump to the dispute list ↓</button> — every disagreement below shows both versions plus our call.</p>
+      <div id="disagreement-list"></div>
+    </div>
+    <h3 style="margin-top:14px">Numbered sources (read 20 Nov 2026)</h3>
+    <ol class="sources-list" id="sources-list"></ol>
+  </section>
+</main>
+
+<div id="print-sheet">
+  <h2>Vice Route 55 — printable checklist (55 trophies)</h2>
+  <ul id="print-list"></ul>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
