@@ -40,9 +40,9 @@ async function check(label, run) {
 }
 
 try {
-  await check('Load Roadmap and render all 55 trophies in Tracker', async () => {
+  await check('Load Tracker (landing) and render all 55 trophies', async () => {
     await page.goto(app);
-    await el('#roadmap .route').waitFor();
+    await el('#tracker .trophy-row').first().waitFor();
     await tab('tracker');
     await el('#match-count').getByText('55 / 55 trophies').waitFor();
     assert.equal(await rows.count(), 55);
